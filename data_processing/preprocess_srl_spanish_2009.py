@@ -1,10 +1,9 @@
 import pandas as pd
-import sys
 import logging
-from Scratch.load_utils import *
-from Scratch.sentence_manipulation import Tree_Manipulation
+from data_processing.load_utils import *
+from data_processing.sentence_manipulation import Tree_Manipulation
 logging.basicConfig(level=logging.INFO)
-sys.path.insert(1, os.getcwd())
+
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 
@@ -68,6 +67,13 @@ def convert(df):
             continue
 
     print(f"'B-V' tag was overwritten in {bad_srl}/{max_sent_id} sentences.")
+
+    df_target['Domain'] = 'esp_conll09'
+    df_target = df_target.reindex([*[df_target.columns[-1]], *df_target.columns[:-1]], axis=1)
+    df_target['PennTree POS'] = '_'
+    df_target = df_target.reindex(['Domain', 'Sent ID', 'ID', 'Form', 'Lemma', 'PennTree POS', 'POS', 'Parse Head', 'Parse Label', 'Is Predicate',
+     'Predicate.Verb Sense'] + list(df.columns[9:]), axis=1)
+
     return df_target
 
 def check(sent_id):
@@ -79,8 +85,10 @@ def check(sent_id):
 
 
 if __name__ == "__main__":
-    df = load_09_spanish('test')
+    split = 'train'
+    df = load_09_spanish(split)
     df_target = normalize_srl_tagset(df)
     df_target = convert(df_target)
-    df_target.to_csv(os.path.join(os.getcwd(), '..', 'Data', 'Spanish', '2009_normalized', 'converted_test.txt'), sep='\t', header=False, index=False, encoding='utf-8', quoting=csv.QUOTE_NONE)
+    df_target.to_csv(os.path.join(DATADIR, 'Spanish', '2009_normalized', f'esp09_{split}.txt'), sep='\t', header=False, index=False, encoding='utf-8', quoting=csv.QUOTE_NONE)
+    add_blank_line_after_sent(f'esp09_{split}.txt', os.path.join('Spanish', '2009_normalized'))
     print("Done.")

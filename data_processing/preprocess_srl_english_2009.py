@@ -1,9 +1,11 @@
-import pandas as pd
 import sys
+import os
 import logging
-from Scratch.load_utils import *
-from Scratch.sentence_manipulation import Tree_Manipulation
+import pandas as pd
 import numpy as np
+from data_processing.load_utils import *
+from data_processing.sentence_manipulation import Tree_Manipulation
+
 logging.basicConfig(level=logging.INFO)
 sys.path.insert(1, os.getcwd())
 pd.set_option('display.max_columns', None)
@@ -101,3 +103,5 @@ if __name__ == "__main__":
     df_target = normalize_srl_tagset(df_target)
     df_target.to_csv(os.path.join(os.getcwd(), '..', 'Data', 'English', '2009_normalized', f'converted_{split}.txt'), sep='\t', header=False, index=False, quoting=csv.QUOTE_NONE)
     logging.info("Done.")
+
+    # TODO: Change this file to ensure it fits in with the new Spanish format.

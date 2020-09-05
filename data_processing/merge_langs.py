@@ -1,9 +1,11 @@
 import pandas as pd
-import sys
+# import sys
 import logging
-from Scratch.load_utils import *
+# import os
+# sys.path.insert(1, os.getcwd())
+from data_processing.load_utils import *
 logging.basicConfig(level=logging.INFO)
-sys.path.insert(1, os.getcwd())
+
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 
@@ -52,3 +54,6 @@ if __name__ == '__main__':
 
     # TODO: Esp word ids start from 1, Eng starts from 0. Check if this is a problem, and change this.
     print('Done.')
+
+
+    # TODO: Change this file to ensure it fits in with the new Spanish format.

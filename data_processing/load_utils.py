@@ -2,6 +2,8 @@ import os
 import pandas as pd
 import csv
 
+DATADIR = os.path.join(os.getcwd(), '..', '..', 'Data')
+
 srl_names = ['SRL-1','SRL-2','SRL-3','SRL-4','SRL-5','SRL-6','SRL-7','SRL-8','SRL-9','SRL-10','SRL-11','SRL-12','SRL-13','SRL-14','SRL-15',
                 'SRL-16','SRL-17','SRL-18','SRL-19','SRL-20','SRL-21','SRL-22','SRL-23','SRL-24','SRL-25','SRL-26']
 
@@ -22,12 +24,12 @@ col_lists = {
     '17 spanish': (['ID', 'Form', 'Lemma', 'POS', 'PPOS', 'FEAT', 'Parse Head', 'Parse Label', 'Ignore1', 'Ignore2'],
                    ['ID', 'Form', 'Lemma', 'POS', 'Parse Head', 'Parse Label'],
                    ['ID', 'Form', 'Lemma', 'POS', 'Parse Head', 'Parse Label']),
-    'English': (['Sent ID', 'ID', 'Form', 'Lemma', 'PennTree POS', 'POS', 'Parse Head', 'Parse Label', 'Is Predicate', 'Predicate.Verb Sense'],
-                ['Sent ID', 'ID', 'Form', 'Lemma', 'PennTree POS', 'POS', 'Parse Head', 'Parse Label', 'Is Predicate', 'Predicate.Verb Sense'],
-                ['Sent ID', 'ID', 'Form', 'Lemma', 'PennTree POS', 'POS', 'Parse Head', 'Parse Label', 'Is Predicate', 'Predicate.Verb Sense']),
-    'Spanish': (['Sent ID', 'ID', 'Form', 'Lemma', 'POS', 'Parse Head', 'Parse Label', 'Is Predicate', 'Predicate.Verb Sense'],
-                ['Sent ID', 'ID', 'Form', 'Lemma', 'POS', 'Parse Head', 'Parse Label', 'Is Predicate', 'Predicate.Verb Sense'],
-                ['Sent ID', 'ID', 'Form', 'Lemma', 'PennTree POS', 'POS', 'Parse Head', 'Parse Label', 'Is Predicate', 'Predicate.Verb Sense'])
+    'English': (['Domain', 'Sent ID', 'ID', 'Form', 'Lemma', 'PennTree POS', 'POS', 'Parse Head', 'Parse Label', 'Is Predicate', 'Predicate.Verb Sense'],
+                ['Domain', 'Sent ID', 'ID', 'Form', 'Lemma', 'PennTree POS', 'POS', 'Parse Head', 'Parse Label', 'Is Predicate', 'Predicate.Verb Sense'],
+                ['Domain', 'Sent ID', 'ID', 'Form', 'Lemma', 'PennTree POS', 'POS', 'Parse Head', 'Parse Label', 'Is Predicate', 'Predicate.Verb Sense']),
+    'Spanish': (['Domain', 'Sent ID', 'ID', 'Form', 'Lemma', 'PennTree POS', 'POS', 'Parse Head', 'Parse Label', 'Is Predicate', 'Predicate.Verb Sense'],
+                ['Domain', 'Sent ID', 'ID', 'Form', 'Lemma', 'PennTree POS', 'POS', 'Parse Head', 'Parse Label', 'Is Predicate', 'Predicate.Verb Sense'],
+                ['Domain', 'Sent ID', 'ID', 'Form', 'Lemma', 'PennTree POS', 'POS', 'Parse Head', 'Parse Label', 'Is Predicate', 'Predicate.Verb Sense'])
 }
 
 metadata = {
@@ -55,13 +57,13 @@ metadata = {
     '17 spanish dev': ('es-ud-dev.conllu.txt', 0),
     '17 spanish test': ('es-ud-test.conllu.txt', 0),
 
-    'English train': ('converted_train.txt', 18),
-    'English dev': ('converted_dev.txt', 12),
-    'English test': ('converted_test.txt', 9),
+    'English train': ('eng09_train.txt', 18),
+    'English dev': ('eng09_dev.txt', 12),
+    'English test': ('eng09_test.txt', 9),
 
-    'Spanish train': ('converted_train.txt', 17),
-    'Spanish dev': ('converted_dev.txt', 13),
-    'Spanish test': ('converted_test.txt', 15),
+    'Spanish train': ('esp09_train.txt', 18),
+    'Spanish dev': ('esp09_dev.txt', 14),
+    'Spanish test': ('esp09_test.txt', 16),
 }
 
 
@@ -106,49 +108,12 @@ def load_df(dirpath, dataset, split):
         assert set(pd.notna(df_full[srl_names[num_cols]])) == {False}
 
     df = df_full.filter(col_lists[dataset][1] + srl_names[:num_cols], axis=1)
-    if dataset == 'Spanish':
-        df['PennTree POS'] = '_'
-        df = df.reindex(col_lists[dataset][2] + srl_names[:num_cols], axis=1)
     df.columns = col_lists[dataset][2] + srl_names[:num_cols]
     return df
 
 
-def load_05(split):
-    "split: 'train', 'dev', 'test', 'test ood'"
-    dirpath = os.path.join(os.getcwd(), '..', 'Data', 'English', 'conll05')
-    df = load_df(dirpath=dirpath, dataset='05 english', split=split)
-    return df
-
-def load_09_english_pt(split):
-    "split: 'train', 'dev', 'test', 'test ood'"
-    dirpath = os.path.join(os.getcwd(), '..', 'Data', 'English', 'conll09')
-    df = load_df(dirpath=dirpath, dataset='09 english', split=split)
-    df = add_sentence_ids(df)
-    return df
-
-def load_09_english_ud(split):
-    "split: 'train', 'dev', 'test', 'test ood'"
-    dirpath = os.path.join(os.getcwd(), '..', 'Data', 'English', 'conll09_ud')
-    df = load_df(dirpath=dirpath, dataset='09 english ud', split=split)
-    df = add_sentence_ids(df)
-    return df
-
-def load_09_spanish(split):
-    "split: 'train', 'dev', 'test'"
-    dirpath = os.path.join(os.getcwd(), '..', 'Data', 'Spanish', 'CoNLL2009-ST-Spanish')
-    df = load_df(dirpath=dirpath, dataset='09 spanish', split=split)
-    df = add_sentence_ids(df)
-    return df
-
-def load_17_spanish(split):
-    "split: 'train', 'dev', 'test'"
-    dirpath = os.path.join(os.getcwd(), '..', 'Data', 'Spanish', 'CoNLL_2017')
-    df = load_df(dirpath=dirpath, dataset='17 spanish', split=split)
-    df = add_sentence_ids(df)
-    return df
-
 def preprocess_17_spanish(filename):
-    filepath = os.path.join(os.getcwd(), '..', 'Data', 'Spanish', 'CoNLL_2017', filename)
+    filepath = os.path.join(DATADIR, 'Spanish', 'CoNLL_2017', filename)
     content = open(filepath, encoding='utf-8').readlines()
     content = [x.strip() for x in content]
     print("Number of lines: ", len(content))
@@ -156,7 +121,7 @@ def preprocess_17_spanish(filename):
     lines=[]
     for line in content:
         if line != '':
-            if line[0]!= '#' and '-' not in line.split('\t')[0]:
+            if line[0] != '#' and '-' not in line.split('\t')[0]:
                 lines.append(line)
     print(len(lines), " lines retained.")
 
@@ -165,13 +130,9 @@ def preprocess_17_spanish(filename):
             f.write("%s\n" % item)
     print('Saved as ', filepath+'.txt')
 
-def load_normalized(split, language):
-    dirpath = os.path.join(os.getcwd(), '..', 'Data', language, '2009_normalized')
-    df = load_df(dirpath=dirpath, dataset=language, split=split)
-    return df
 
-def add_blank_line_after_sent(filename):
-    filepath = os.path.join(os.getcwd(), '..', 'Data', 'Final', filename)
+def add_blank_line_after_sent(filename, dirpath='Final'):
+    filepath = os.path.join(DATADIR, dirpath, filename)
     content = open(filepath, encoding='utf-8').readlines()
     content = [x.strip() for x in content]
     print("Number of lines: ", len(content))
@@ -192,16 +153,66 @@ def add_blank_line_after_sent(filename):
             f.write("%s\n" % item)
     print('Saved as ', filepath)
 
+
+def load_05(split):
+    "split: 'train', 'dev', 'test', 'test ood'"
+    dirpath = os.path.join(DATADIR, 'English', 'conll05')
+    df = load_df(dirpath=dirpath, dataset='05 english', split=split)
+    return df
+
+
+def load_09_english_pt(split):
+    "split: 'train', 'dev', 'test', 'test ood'"
+    dirpath = os.path.join(DATADIR, 'English', 'conll09')
+    df = load_df(dirpath=dirpath, dataset='09 english', split=split)
+    df = add_sentence_ids(df)
+    return df
+
+
+def load_09_english_ud(split):
+    "split: 'train', 'dev', 'test', 'test ood'"
+    dirpath = os.path.join(DATADIR, 'English', 'conll09_ud')
+    df = load_df(dirpath=dirpath, dataset='09 english ud', split=split)
+    df = add_sentence_ids(df)
+    return df
+
+
+def load_09_spanish(split):
+    "split: 'train', 'dev', 'test'"
+    dirpath = os.path.join(DATADIR, 'Spanish', 'CoNLL2009-ST-Spanish')
+    df = load_df(dirpath=dirpath, dataset='09 spanish', split=split)
+    df = add_sentence_ids(df)
+    return df
+
+
+def load_17_spanish(split):
+    "split: 'train', 'dev', 'test'"
+    dirpath = os.path.join(DATADIR, 'Spanish', 'CoNLL_2017')
+    df = load_df(dirpath=dirpath, dataset='17 spanish', split=split)
+    df = add_sentence_ids(df)
+    return df
+
+
+def load_normalized(split, language):
+    dirpath = os.path.join(DATADIR, language, '2009_normalized')
+    df = load_df(dirpath=dirpath, dataset=language, split=split)
+    return df
+
+
 if __name__ == "__main__":
-    # preprocess_17_spanish('es-ud-train.conllu')
-    # df = load_17_spanish('train')
-
-    # df = load_05('train')
-    # df1 = load_09_english_pt('test ood') # train, val, test, test ood
+    # df = load_05('test')
+    # df1 = load_09_english_pt('test') # train, val, test, test ood
     # df = load_09_english_ud('test')
-    # df2 = load_09_spanish('train')  # train, val, test
-    # df3 = load_09_spanish('dev')
-    # df4 = load_09_spanish('test')
+    # df2 = load_09_spanish('test')  # train, val, test
+    # df = load_17_spanish('test')
 
+    # preprocess_17_spanish('es-ud-train.conllu')
     # add_blank_line_after_sent('eng09-esp09_dev.txt')
+
+    # dev_eng = load_normalized('dev', 'English')
+    # dev_eng = dev_eng = load_normalized('dev', 'English')
+    # train = load_normalized('dev', 'Spanish')
+
     print('Done.')
+
+    # TODO: Test the Spanish 17 methods and confirm they work
