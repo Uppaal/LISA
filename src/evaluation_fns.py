@@ -23,11 +23,24 @@ def conll_srl_eval_tf(predictions, targets, predicate_predictions, words, mask, 
     excess_count = create_metric_variable("excess_count", shape=[], dtype=tf.int64)
     missed_count = create_metric_variable("missed_count", shape=[], dtype=tf.int64)
 
-    # first, use reverse maps to convert ints to strings
+    indexes = tf.where(tf.equal(-1, tf.cast(predictions, tf.int32)))
+    predictions = tf.Print(predictions, [tf.gather_nd(predictions, indexes)], message='conll_srl_eval predictions srl', summarize=10)
     str_predictions = nn_utils.int_to_str_lookup_table(predictions, reverse_maps['srl'])
+
+    indexes = tf.where(tf.equal(-1, tf.cast(words, tf.int32)))
+    words = tf.Print(words, [tf.gather_nd(words, indexes)], message='conll_srl_eval words', summarize=10)
     str_words = nn_utils.int_to_str_lookup_table(words, reverse_maps['word'])
+
+    indexes = tf.where(tf.equal(-1, tf.cast(targets, tf.int32)))
+    targets = tf.Print(targets, [tf.gather_nd(targets, indexes)], message='conll_srl_eval targets srl', summarize=10)
     str_targets = nn_utils.int_to_str_lookup_table(targets, reverse_maps['srl'])
+
+    indexes = tf.where(tf.equal(-1, tf.cast(pos_predictions, tf.int32)))
+    pos_predictions = tf.Print(pos_predictions, [tf.gather_nd(pos_predictions, indexes)], message='conll_srl_eval targets gold-pos', summarize=10)
     str_pos_predictions = nn_utils.int_to_str_lookup_table(pos_predictions, reverse_maps['gold_pos'])
+
+    indexes = tf.where(tf.equal(-1, tf.cast(pos_targets, tf.int32)))
+    pos_targets = tf.Print(pos_targets, [tf.gather_nd(pos_targets, indexes)], message='conll_srl_eval pos targets', summarize=10)
     str_pos_targets = nn_utils.int_to_str_lookup_table(pos_targets, reverse_maps['gold_pos'])
 
     # need to pass through the stuff for pyfunc
@@ -64,14 +77,41 @@ def conll09_srl_eval_tf(predictions, targets, predicate_predictions, words, mask
     missed_count = create_metric_variable("missed_count", shape=[], dtype=tf.int64)
 
     # first, use reverse maps to convert ints to strings
+
+    indexes = tf.where(tf.equal(-1, tf.cast(predictions, tf.int32)))
+    predictions = tf.Print(predictions, [tf.gather_nd(predictions, indexes)], message='conll09_srl_eval predictions',  summarize=10)
     str_predictions = nn_utils.int_to_str_lookup_table(predictions, reverse_maps['srl'])
+
+    indexes = tf.where(tf.equal(-1, tf.cast(words, tf.int32)))
+    words = tf.Print(words, [tf.gather_nd(words, indexes)], message='conll09_srl_eval words',  summarize=10)
     str_words = nn_utils.int_to_str_lookup_table(words, reverse_maps['word'])
+
+    indexes = tf.where(tf.equal(-1, tf.cast(targets, tf.int32)))
+    targets = tf.Print(targets, [tf.gather_nd(targets, indexes)], message='conll09_srl_eval targets',  summarize=10)
     str_srl_targets = nn_utils.int_to_str_lookup_table(targets, reverse_maps['srl'])
+
+    indexes = tf.where(tf.equal(-1, tf.cast(parse_label_targets, tf.int32)))
+    parse_label_targets = tf.Print(parse_label_targets, [tf.gather_nd(parse_label_targets, indexes)], message='conll09_srl_eval parse target',  summarize=10)
     str_parse_label_targets = nn_utils.int_to_str_lookup_table(parse_label_targets, reverse_maps['parse_label'])
+
+    indexes = tf.where(tf.equal(-1, tf.cast(parse_label_predictions, tf.int32)))
+    parse_label_predictions = tf.Print(parse_label_predictions, [tf.gather_nd(parse_label_predictions, indexes)], message='conll09_srl_eval parse pred',  summarize=10)
     str_parse_label_predictions = nn_utils.int_to_str_lookup_table(parse_label_predictions, reverse_maps['parse_label'])
+
+    indexes = tf.where(tf.equal(-1, tf.cast(pos_predictions, tf.int32)))
+    pos_predictions = tf.Print(pos_predictions, [tf.gather_nd(pos_predictions, indexes)], message='conll09_srl_eval pos pred',  summarize=10)
     str_pos_predictions = nn_utils.int_to_str_lookup_table(pos_predictions, reverse_maps['gold_pos'])
+
+    indexes = tf.where(tf.equal(-1, tf.cast(pos_targets, tf.int32)))
+    pos_targets = tf.Print(pos_targets, [tf.gather_nd(pos_targets, indexes)], message='conll09_srl_eval pos target',  summarize=10)
     str_pos_targets = nn_utils.int_to_str_lookup_table(pos_targets, reverse_maps['gold_pos'])
+
+    indexes = tf.where(tf.equal(-1, tf.cast(predicate_predictions, tf.int32)))
+    predicate_predictions = tf.Print(predicate_predictions, [tf.gather_nd(predicate_predictions, indexes)], message='conll09_srl_eval predicate pred',  summarize=10)
     str_predicate_predictions = nn_utils.int_to_str_lookup_table(predicate_predictions, reverse_maps['predicate'])
+
+    indexes = tf.where(tf.equal(-1, tf.cast(predicate_targets, tf.int32)))
+    predicate_targets = tf.Print(predicate_targets, [tf.gather_nd(predicate_targets, indexes)], message='conll09_srl_eval predicate target',  summarize=10)
     str_predicate_targets = nn_utils.int_to_str_lookup_table(predicate_targets, reverse_maps['predicate'])
 
     # need to pass through the stuff for pyfunc
@@ -107,9 +147,23 @@ def conll_parse_eval_tf(predictions, targets, parse_head_predictions, words, mas
     total_count = create_metric_variable("total_count", shape=[], dtype=tf.int64)
     correct_count = create_metric_variable("correct_count", shape=[3], dtype=tf.int64)
 
+    indexes = tf.where(tf.equal(-1, tf.cast(words, tf.int32)))
+    words = tf.Print(words, [tf.gather_nd(words, indexes)],  message='conll_parse_eval words', summarize=10)
     str_words = nn_utils.int_to_str_lookup_table(words, reverse_maps['word'])
+
+    indexes = tf.where(tf.equal(-1, tf.cast(predictions, tf.int32)))
+    predictions = tf.Print(predictions, [tf.gather_nd(predictions, indexes)], message='conll_parse_eval parse pred', summarize=10)
     str_predictions = nn_utils.int_to_str_lookup_table(predictions, reverse_maps['parse_label'])
+    str_predictions = tf.Print(str_predictions, [str_predictions], message='str predictions')
+    print(str_predictions.dtype,'str predictions dtype')
+
+    indexes = tf.where(tf.equal(-1, tf.cast(targets, tf.int32)))
+    targets = tf.Print(targets, [tf.gather_nd(targets, indexes)], message='conll_parse_eval parse target', summarize=10)
+    print('Reverse maps for parse label:', {x: reverse_maps['parse_label'][x] for x in list(reverse_maps['parse_label'].keys())})
     str_targets = nn_utils.int_to_str_lookup_table(targets, reverse_maps['parse_label'])
+
+    indexes = tf.where(tf.equal(-1, tf.cast(pos_targets, tf.int32)))
+    pos_targets = tf.Print(pos_targets, [tf.gather_nd(pos_targets, indexes)], message='conll_parse_eval pos target', summarize=10)
     str_pos_targets = nn_utils.int_to_str_lookup_table(pos_targets, reverse_maps['gold_pos'])
 
     # need to pass through the stuff for pyfunc
@@ -164,3 +218,4 @@ def get_params(task_outputs, task_map, train_outputs, features, labels, task_lab
       else:
         params[param_name] = param_values['value']
   return params
+

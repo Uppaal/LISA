@@ -107,8 +107,16 @@ class Vocab:
     # init maps
     vocabs = []
     vocabs_index = {}
+
     for d in data_config:
       updatable = 'updatable' in data_config[d] and data_config[d]['updatable']
+
+      # print(f'd={d}; vocab_maps={self.vocab_maps.keys()}')
+      # if d == 'parse_label':
+          # print('VOCAB are we going to update? (1)', 'vocab' in data_config[d] and data_config[d]['vocab'] == d and (updatable or not update_only))
+          # print(f'updatable {updatable}; update only:{update_only}')
+          # print('Are we going to update? (2)', update_only and updatable and d in self.vocab_maps)  
+
       if 'vocab' in data_config[d] and data_config[d]['vocab'] == d and (updatable or not update_only):
         this_vocab = {}
         if update_only and updatable and d in self.vocab_maps:
@@ -186,11 +194,15 @@ class Vocab:
     return {k: len(vocabs[vocabs_index[k]]) for k in vocabs_index.keys()}
 
   def make_vocab_files(self, data_config, save_dir, filenames=None):
-    return self.create_load_or_update_vocab_files(data_config, save_dir, filenames, False)
+    temp = self.create_load_or_update_vocab_files(data_config, save_dir, filenames, False)
+    print('VOCAB create', temp)
+    return temp
 
   def update(self, filenames):
     vocab_names_sizes = self.create_load_or_update_vocab_files(self.data_config, self.save_dir, filenames, True)
+    print('VOCAB update', vocab_names_sizes)
 
     # merge new and old
     for vocab_name, vocab_size in vocab_names_sizes.items():
       self.vocab_names_sizes[vocab_name] = vocab_size
+    print('VOCAB after updating', self.vocab_names_sizes)

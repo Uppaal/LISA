@@ -33,7 +33,8 @@
   "parse_label": {
     "conll_idx": 8,
     "label": true,
-    "vocab": "parse_label"
+    "vocab": "parse_label",
+    "updatable": true
   },
   "predicate": {
     "conll_idx": 10,
