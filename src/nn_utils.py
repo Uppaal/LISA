@@ -7,6 +7,17 @@ def leaky_relu(x): return tf.maximum(0.1 * x, x)
 
 def int_to_str_lookup_table(inputs, lookup_map):
   # todo order of map.values() is probably not guaranteed; should prob sort by keys first
+  # temp = np.array(list(lookup_map.values()))
+  #print("\nLOOKUP VALUES\n", temp.shape, "\n", temp[:50])
+  #print("\nLOOKUP KEYS", list(lookup_map.keys())[:50])
+
+  #indexes = tf.where(tf.equal(-1, tf.cast(inputs, tf.int32)))  
+  #inputs = tf.Print(inputs, [tf.shape(inputs)], message='INPUT SHAPE')
+  #inputs = tf.Print(inputs, [indexes], message='FIND', summarize=6)
+  #inputs = tf.Print(inputs, [tf.gather_nd(inputs, indexes)], message='ELEMENTS', summarize=6)
+
+  #inputs = tf.Print(inputs, [tf.where(tf.equal(-1, 
+  #                tf.reshape(tf.cast(inputs, tf.int32), [-1])))], message='FIND')
   return tf.nn.embedding_lookup(np.array(list(lookup_map.values())), inputs)
 
 

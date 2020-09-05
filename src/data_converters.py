@@ -24,7 +24,7 @@ def conll09_binary_predicates_converter(split_line, idx):
   return [str(split_line[idx] != '_')]
 
 
-def conll09_predicate_sense_converter(split_line, idx):
+def conll09_predicate_sense_converter(split_line, idx):   # isc is the CoNLL idx
   verb_sense_str = split_line[idx]
   just_verb_sense = verb_sense_str if verb_sense_str == "_" else verb_sense_str.split('.')[1]
   return [just_verb_sense]

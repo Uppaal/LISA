@@ -5,3 +5,4 @@ embeddings/
 models/
 outputs/
 Data/
+*.nfs*
