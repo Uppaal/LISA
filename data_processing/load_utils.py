@@ -21,9 +21,12 @@ col_lists = {
                       ['ID', 'Form', 'Lemma', 'PennTree POS', 'POS', 'Parse Head', 'Parse Label', 'Is Predicate', 'Predicate.Verb Sense']),
     '09 spanish': (official_colnames, imp_official_colnames,
                    ['ID', 'Form', 'Lemma', 'POS', 'Parse Head', 'Parse Label', 'Is Predicate', 'Predicate.Verb Sense']),
-    '17 spanish': (['ID', 'Form', 'Lemma', 'POS', 'PPOS', 'FEAT', 'Parse Head', 'Parse Label', 'Ignore1', 'Ignore2'],
-                   ['ID', 'Form', 'Lemma', 'POS', 'Parse Head', 'Parse Label'],
-                   ['ID', 'Form', 'Lemma', 'POS', 'Parse Head', 'Parse Label']),
+    '17 spanish raw': (['ID', 'Form', 'Lemma', 'POS', 'PPOS', 'FEAT', 'Parse Head', 'Parse Label', 'Ignore1', 'Ignore2'],
+                       ['ID', 'Form', 'Lemma', 'POS', 'Parse Head', 'Parse Label'],
+                       ['ID', 'Form', 'Lemma', 'POS', 'Parse Head', 'Parse Label']),
+    '17 spanish': (['Domain', 'Sent ID', 'ID', 'Form', 'Lemma', 'PennTree POS', 'POS', 'Parse Head', 'Parse Label'],
+                   ['Domain', 'Sent ID', 'ID', 'Form', 'Lemma', 'PennTree POS', 'POS', 'Parse Head', 'Parse Label'],
+                   ['Domain', 'Sent ID', 'ID', 'Form', 'Lemma', 'PennTree POS', 'POS', 'Parse Head', 'Parse Label']),
     'English': (['Domain', 'Sent ID', 'ID', 'Form', 'Lemma', 'PennTree POS', 'POS', 'Parse Head', 'Parse Label', 'Is Predicate', 'Predicate.Verb Sense'],
                 ['Domain', 'Sent ID', 'ID', 'Form', 'Lemma', 'PennTree POS', 'POS', 'Parse Head', 'Parse Label', 'Is Predicate', 'Predicate.Verb Sense'],
                 ['Domain', 'Sent ID', 'ID', 'Form', 'Lemma', 'PennTree POS', 'POS', 'Parse Head', 'Parse Label', 'Is Predicate', 'Predicate.Verb Sense']),
@@ -53,9 +56,13 @@ metadata = {
     '09 spanish dev': ('CoNLL2009-ST-Spanish-development.txt', 13),
     '09 spanish test': ('CoNLL2009-ST-evaluation-Spanish.txt', 15),
 
-    '17 spanish train': ('es-ud-train.conllu.txt', 0),
-    '17 spanish dev': ('es-ud-dev.conllu.txt', 0),
-    '17 spanish test': ('es-ud-test.conllu.txt', 0),
+    '17 spanish raw train': ('es-ud-train.conllu.txt', 0),
+    '17 spanish raw dev': ('es-ud-dev.conllu.txt', 0),
+    '17 spanish raw test': ('es-ud-test.conllu.txt', 0),
+
+    '17 spanish train': ('esp17_train.txt', 0),
+    '17 spanish dev': ('esp17_dev.txt', 0),
+    '17 spanish test': ('esp17_test.txt', 0),
 
     'English train': ('eng09_train.txt', 18),
     'English dev': ('eng09_dev.txt', 12),
@@ -112,25 +119,6 @@ def load_df(dirpath, dataset, split):
     return df
 
 
-def preprocess_17_spanish(filename):
-    filepath = os.path.join(DATADIR, 'Spanish', 'CoNLL_2017', filename)
-    content = open(filepath, encoding='utf-8').readlines()
-    content = [x.strip() for x in content]
-    print("Number of lines: ", len(content))
-    # lines = [line for line in content if line!='' and line[0]!='#' and '-' not in line[0]]
-    lines=[]
-    for line in content:
-        if line != '':
-            if line[0] != '#' and '-' not in line.split('\t')[0]:
-                lines.append(line)
-    print(len(lines), " lines retained.")
-
-    with open(filepath+'.txt', 'w', encoding='utf-8') as f:
-        for item in lines:
-            f.write("%s\n" % item)
-    print('Saved as ', filepath+'.txt')
-
-
 def add_blank_line_after_sent(filename, dirpath='Final'):
     filepath = os.path.join(DATADIR, dirpath, filename)
     content = open(filepath, encoding='utf-8').readlines()
@@ -185,11 +173,15 @@ def load_09_spanish(split):
     return df
 
 
-def load_17_spanish(split):
+def load_17_spanish(split, raw=False):
     "split: 'train', 'dev', 'test'"
-    dirpath = os.path.join(DATADIR, 'Spanish', 'CoNLL_2017')
-    df = load_df(dirpath=dirpath, dataset='17 spanish', split=split)
-    df = add_sentence_ids(df)
+    if raw:
+        dirpath = os.path.join(DATADIR, 'Spanish', 'CoNLL_2017')
+        df = load_df(dirpath=dirpath, dataset='17 spanish raw', split=split)
+        df = add_sentence_ids(df)
+    else:
+        dirpath = os.path.join(DATADIR, 'Spanish', '2017_normalized')
+        df = load_df(dirpath=dirpath, dataset='17 spanish', split=split)
     return df
 
 
@@ -201,18 +193,10 @@ def load_normalized(split, language):
 
 if __name__ == "__main__":
     # df = load_05('test')
-    # df1 = load_09_english_pt('test') # train, val, test, test ood
+    # df = load_09_english_pt('test') # train, val, test, test ood
     # df = load_09_english_ud('test')
-    # df2 = load_09_spanish('test')  # train, val, test
+    # df = load_09_spanish('test')  # train, val, test
     # df = load_17_spanish('test')
-
-    # preprocess_17_spanish('es-ud-train.conllu')
-    # add_blank_line_after_sent('eng09-esp09_dev.txt')
-
     # dev_eng = load_normalized('dev', 'English')
-    # dev_eng = dev_eng = load_normalized('dev', 'English')
-    # train = load_normalized('dev', 'Spanish')
-
+    # dev_esp = load_normalized('dev', 'Spanish')
     print('Done.')
-
-    # TODO: Test the Spanish 17 methods and confirm they work

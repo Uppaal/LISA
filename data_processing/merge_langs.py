@@ -1,8 +1,6 @@
 import pandas as pd
-# import sys
 import logging
-# import os
-# sys.path.insert(1, os.getcwd())
+import os
 from data_processing.load_utils import *
 logging.basicConfig(level=logging.INFO)
 
@@ -24,36 +22,22 @@ def merge_09_17(split):
     eng_df = load_normalized(split, 'English')
     esp_df = load_17_spanish(split)
 
-    esp_df['PennTree POS'] = '_'
-    eng_df['Domain'] = 'eng_conll09'
-    eng_df = eng_df.reindex([*[eng_df.columns[-1]], *eng_df.columns[:-1]], axis=1)
-    esp_df['Domain'] = 'esp_conll09'
-    esp_df = esp_df.reindex([*[esp_df.columns[-1]], *esp_df.columns[:-1]], axis=1)
-
-    merge_and_save(eng_df, esp_df, os.path.join(os.getcwd(), '..', 'Data', 'Final') , f'eng09-esp17_{split}.txt')
+    filepath = os.path.join(DATADIR, 'Final')
+    merge_and_save(eng_df, esp_df, filepath , f'eng09-esp17_{split}.txt')
 
 def merge_09_09(split):
     eng_df = load_normalized(split, 'English')
     esp_df = load_normalized(split, 'Spanish')
 
-    eng_df['Domain'] = 'eng_conll09'
-    eng_df = eng_df.reindex([*[eng_df.columns[-1]], *eng_df.columns[:-1]], axis=1)
-    esp_df['Domain'] = 'esp_conll09'
-    esp_df = esp_df.reindex([*[esp_df.columns[-1]], *esp_df.columns[:-1]], axis=1)
-
-    filepath = os.path.join(os.getcwd(), '..', 'Data', 'Final')
+    filepath = os.path.join(DATADIR, 'Final')
     merge_and_save(eng_df, esp_df, filepath, f'eng09-esp09_{split}.txt')
 
 if __name__ == '__main__':
-    merge_09_09('test')
-    merge_09_09('dev')
-    merge_09_09('train')
-    merge_09_17('train')
-    merge_09_17('dev')
-    merge_09_17('test')
-
     # TODO: Esp word ids start from 1, Eng starts from 0. Check if this is a problem, and change this.
+    # merge_09_09('test')
+    # merge_09_09('dev')
+    # merge_09_09('train')
+    # merge_09_17('train')
+    # merge_09_17('dev')
+    # merge_09_17('test')
     print('Done.')
-
-
-    # TODO: Change this file to ensure it fits in with the new Spanish format.

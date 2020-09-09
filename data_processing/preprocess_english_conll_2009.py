@@ -98,10 +98,9 @@ if __name__ == "__main__":
     df_05 = load_05(split)
     df_09 = load_09_english_ud(split)
     df_target = copy_srl_tags(df_05, df_09)
-    df_target.to_csv(os.path.join(os.getcwd(), '..', 'Data', 'English', '2009_normalized', f'converted_{split}.txt'),
-                     sep='\t', header=False, index=False, quoting=csv.QUOTE_NONE)
     df_target = normalize_srl_tagset(df_target)
-    df_target.to_csv(os.path.join(os.getcwd(), '..', 'Data', 'English', '2009_normalized', f'converted_{split}.txt'), sep='\t', header=False, index=False, quoting=csv.QUOTE_NONE)
-    logging.info("Done.")
-
-    # TODO: Change this file to ensure it fits in with the new Spanish format.
+    df_target['Domain'] = 'eng_conll09'
+    df_target = df_target.reindex([*[df_target.columns[-1]], *df_target.columns[:-1]], axis=1)
+    df_target.to_csv(os.path.join(DATADIR, 'English', '2009_normalized', f'eng09_{split}.txt'), sep='\t', header=False, index=False, quoting=csv.QUOTE_NONE)
+    add_blank_line_after_sent(f'eng09_{split}.txt', os.path.join('English', '2009_normalized'))
+    print("Done.")

@@ -85,10 +85,12 @@ def check(sent_id):
 
 
 if __name__ == "__main__":
-    split = 'train'
+    split = 'dev'
     df = load_09_spanish(split)
     df_target = normalize_srl_tagset(df)
     df_target = convert(df_target)
     df_target.to_csv(os.path.join(DATADIR, 'Spanish', '2009_normalized', f'esp09_{split}.txt'), sep='\t', header=False, index=False, encoding='utf-8', quoting=csv.QUOTE_NONE)
     add_blank_line_after_sent(f'esp09_{split}.txt', os.path.join('Spanish', '2009_normalized'))
-    print("Done.")
+    logging.info("Done.")
+
+    # Note: the 'grup.verb' parse label appears in dev, but never in train or test. It has been deleted from the original data, but recheck after a run.
