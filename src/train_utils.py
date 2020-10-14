@@ -32,10 +32,13 @@ def load_hparams(args, model_config):
 def get_input_fn(vocab, data_config, data_files, batch_size, num_epochs, shuffle,
                  shuffle_buffer_multiplier=1, embedding_files=None):
   # this needs to be created from here (lazily) so that it ends up in the same tf.Graph as everything else
+  print('HEREEEEE about to start vocab_lookup_ops')
   vocab_lookup_ops = vocab.create_vocab_lookup_ops(embedding_files)
-
-  return dataset.get_data_iterator(data_files, data_config, vocab_lookup_ops, batch_size, num_epochs, shuffle,
+  print('HEREEEEEE vocab lookup ops succeeded')
+  temp =  dataset.get_data_iterator(data_files, data_config, vocab_lookup_ops, batch_size, num_epochs, shuffle,
                                    shuffle_buffer_multiplier)
+  print('HEREEEEE data iterator successfully made')
+  return temp
 
 
 def load_json_configs(config_file_list, args=None):

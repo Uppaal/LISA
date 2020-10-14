@@ -62,13 +62,22 @@ class Vocab:
 
       if embedding_files:
         for embedding_file in embedding_files:
+          print('HERE embedding file:', embedding_file)
           embeddings_name = embedding_file
-          vocab_lookup_ops[embeddings_name] = tf.contrib.lookup.index_table_from_file(embedding_file,
+          temp = tf.contrib.lookup.index_table_from_file(embedding_file,
                                                                                       num_oov_buckets=1,
                                                                                       key_column_index=0,
                                                                                       delimiter=' ')
-          self.vocab_names_sizes[embeddings_name] = vocab_lookup_ops[embeddings_name].size()
+          
 
+          #temp = tf.Print(temp, [tf.cast(temp.size(), tf.int32)], message='HEREE temp.size()')
+          #ids = temp.lookup()
+          #temp = tf.Print(temp, [ids], message='HERE IDs', summarize=10)
+          
+
+          vocab_lookup_ops[embeddings_name] = temp
+          self.vocab_names_sizes[embeddings_name] = vocab_lookup_ops[embeddings_name].size()
+          
     tf.logging.log(tf.logging.INFO, "Created %d vocab lookup ops: %s" %
                    (len(vocab_lookup_ops), str([k for k in vocab_lookup_ops.keys()])))
     return vocab_lookup_ops
